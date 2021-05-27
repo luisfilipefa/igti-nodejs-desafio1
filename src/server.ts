@@ -1,5 +1,6 @@
 import express, { Response } from "express";
 
+import { router as OrderRouter } from "./routes/order.routes";
 import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
@@ -16,6 +17,8 @@ app.use(morgan("dev"));
 app.get("/", (_, res: Response) => {
   res.send("ok");
 });
+
+app.use("/api/orders", OrderRouter);
 
 app.listen(PORT, () => {
   console.log(`[SERVER] Listening on port ${PORT}`);
