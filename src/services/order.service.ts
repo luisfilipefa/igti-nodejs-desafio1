@@ -157,7 +157,7 @@ const count = async (client: string) => {
 
   const total = orders.reduce(
     (acc, order) => {
-      if (order.cliente === client) {
+      if (order.cliente === client && order.entregue) {
         acc.totalCount += 1;
         acc.totalValue += order.valor;
       }
@@ -188,7 +188,33 @@ const metrics = async () => {
     current = 1;
   });
 
-  return products;
+  return products.sort(
+    (a, b) => Number(b.split("-")[1]) - Number(a.split("-")[1])
+  );
+};
+
+const countProducts = async (product: string) => {
+  const { orders } = await readOrdersFile();
+
+  const productExists = orders.find((order) => order.produto === product);
+
+  if (!productExists) {
+    return null;
+  }
+
+  const total = orders.reduce(
+    (acc, order) => {
+      if (order.produto === product && order.entregue) {
+        acc.totalCount += 1;
+        acc.totalValue += order.valor;
+      }
+
+      return acc;
+    },
+    { totalCount: 0, totalValue: 0 }
+  );
+
+  return { totalCount: total.totalCount, totalValue: total.totalValue };
 };
 
 export default {
@@ -199,4 +225,5 @@ export default {
   findOne,
   count,
   metrics,
+  countProducts,
 };

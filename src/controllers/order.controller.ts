@@ -222,6 +222,40 @@ const metrics = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const countProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.body) {
+      return res.status(400).json({
+        error: true,
+        code: "properties.missing",
+        message: "Product not provided",
+      });
+    }
+
+    const total = await Services.countProducts(req.body.produto);
+
+    if (!total) {
+      return res.status(404).json({
+        error: true,
+        code: "info.not_found",
+        message: "Product not found",
+      });
+    }
+
+    res.status(200).json({
+      sucess: true,
+      count: total.totalCount,
+      value: formatCurrency(total.totalValue),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   create,
   updateOne,
@@ -230,4 +264,5 @@ export default {
   findOne,
   count,
   metrics,
+  countProducts,
 };
