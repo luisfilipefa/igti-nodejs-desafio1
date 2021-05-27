@@ -170,6 +170,27 @@ const count = async (client: string) => {
   return { totalCount: total.totalCount, totalValue: total.totalValue };
 };
 
+const metrics = async () => {
+  const { orders } = await readOrdersFile();
+
+  const set = new Set(orders.map((order) => order.produto));
+
+  let products = Array.from(set);
+
+  let current = 1;
+
+  products.forEach((p, index) => {
+    orders.forEach((order) => {
+      if (order.produto === p && order.entregue) {
+        products[index] = `${p} - ${current++}`;
+      }
+    });
+    current = 1;
+  });
+
+  return products;
+};
+
 export default {
   create,
   updateOne,
@@ -177,4 +198,5 @@ export default {
   deleteOne,
   findOne,
   count,
+  metrics,
 };

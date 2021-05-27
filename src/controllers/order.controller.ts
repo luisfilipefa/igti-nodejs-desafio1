@@ -209,6 +209,19 @@ const count = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const metrics = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const metrics = await Services.metrics();
+
+    res.status(200).json({
+      sucess: true,
+      metrics,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   create,
   updateOne,
@@ -216,4 +229,5 @@ export default {
   deleteOne,
   findOne,
   count,
+  metrics,
 };
