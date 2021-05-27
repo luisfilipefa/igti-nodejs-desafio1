@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import Services from "../services/order.service";
+import formatCurrency from "../utils/formatCurrency";
 
 const create = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -63,7 +64,7 @@ const updateOne = async (req: Request, res: Response, next: NextFunction) => {
     if (!order) {
       return res.status(404).json({
         error: true,
-        code: "order.not_found",
+        code: "info.not_found",
         message: "Order not found",
       });
     }
@@ -107,7 +108,7 @@ const updateStatus = async (
     if (!order) {
       return res.status(404).json({
         error: true,
-        code: "order.not_found",
+        code: "info.not_found",
         message: "Order not found",
       });
     }
@@ -136,7 +137,7 @@ const deleteOne = async (req: Request, res: Response, next: NextFunction) => {
     if (!response) {
       return res.status(404).json({
         error: true,
-        code: "order.not_found",
+        code: "info.not_found",
         message: "Order not found",
       });
     }
@@ -164,7 +165,7 @@ const findOne = async (req: Request, res: Response, next: NextFunction) => {
     if (!order) {
       return res.status(404).json({
         error: true,
-        code: "order.not_found",
+        code: "info.not_found",
         message: "Order not found",
       });
     }
@@ -178,10 +179,41 @@ const findOne = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const count = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.body) {
+      return res.status(400).json({
+        error: true,
+        code: "properties.missing",
+        message: "Client not provided",
+      });
+    }
+
+    const total = await Services.count(req.body.cliente);
+
+    if (!total) {
+      return res.status(404).json({
+        error: true,
+        code: "info.not_found",
+        message: "Client not found",
+      });
+    }
+
+    res.status(200).json({
+      sucess: true,
+      count: total.totalCount,
+      value: formatCurrency(total.totalValue),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   create,
   updateOne,
   updateStatus,
   deleteOne,
   findOne,
+  count,
 };

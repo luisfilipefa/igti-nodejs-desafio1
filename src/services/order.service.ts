@@ -146,10 +146,35 @@ const findOne = async (id: number) => {
   return orderExists;
 };
 
+const count = async (client: string) => {
+  const { orders } = await readOrdersFile();
+
+  const clientExists = orders.find((order) => order.cliente === client);
+
+  if (!clientExists) {
+    return null;
+  }
+
+  const total = orders.reduce(
+    (acc, order) => {
+      if (order.cliente === client) {
+        acc.totalCount += 1;
+        acc.totalValue += order.valor;
+      }
+
+      return acc;
+    },
+    { totalCount: 0, totalValue: 0 }
+  );
+
+  return { totalCount: total.totalCount, totalValue: total.totalValue };
+};
+
 export default {
   create,
   updateOne,
   updateStatus,
   deleteOne,
   findOne,
+  count,
 };

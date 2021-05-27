@@ -8,3 +8,4 @@ router.put("/:id", Controller.updateOne);
 router.patch("/:id", Controller.updateStatus);
 router.delete("/:id", Controller.deleteOne);
 router.get("/:id", Controller.findOne);
+router.get("/", Controller.count);
