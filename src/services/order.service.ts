@@ -134,9 +134,22 @@ const deleteOne = async (id: number) => {
   return true;
 };
 
+const findOne = async (id: number) => {
+  const { orders } = await readOrdersFile();
+
+  const orderExists = orders.find((order) => order.id === id);
+
+  if (!orderExists) {
+    return null;
+  }
+
+  return orderExists;
+};
+
 export default {
   create,
   updateOne,
   updateStatus,
   deleteOne,
+  findOne,
 };

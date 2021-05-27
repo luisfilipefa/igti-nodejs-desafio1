@@ -149,9 +149,39 @@ const deleteOne = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const findOne = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    if (!req.params.id) {
+      return res.status(400).json({
+        error: true,
+        code: "properties.missing",
+        message: "Id not provided",
+      });
+    }
+
+    const order = await Services.findOne(Number(req.params.id));
+
+    if (!order) {
+      return res.status(404).json({
+        error: true,
+        code: "order.not_found",
+        message: "Order not found",
+      });
+    }
+
+    res.status(200).json({
+      sucess: true,
+      order,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export default {
   create,
   updateOne,
   updateStatus,
   deleteOne,
+  findOne,
 };
