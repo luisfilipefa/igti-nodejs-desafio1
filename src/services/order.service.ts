@@ -43,6 +43,76 @@ const create = async (values: Partial<IOrder>) => {
   return order;
 };
 
+const updateOne = async (id: number, values: Partial<IOrder>) => {
+  const { nextId, orders } = await readOrdersFile();
+
+  const orderExists = orders.find((order) => order.id === id);
+
+  if (!orderExists) {
+    return null;
+  }
+
+  const updatedOrder = {
+    ...orderExists,
+    ...values,
+  };
+
+  const updatedOrders = orders.map((order) => {
+    if (order.id === id) {
+      return updatedOrder;
+    }
+
+    return order;
+  });
+
+  await writeFile(
+    String(process.env.FILE_PATH),
+    JSON.stringify({
+      nextId,
+      pedidos: updatedOrders,
+    }),
+    "utf-8"
+  );
+
+  return updatedOrder;
+};
+
+const updateStatus = async (id: number, isDelivered: boolean) => {
+  const { nextId, orders } = await readOrdersFile();
+
+  const orderExists = orders.find((order) => order.id === id);
+
+  if (!orderExists) {
+    return null;
+  }
+
+  const updatedOrder = {
+    ...orderExists,
+    entregue: isDelivered,
+  };
+
+  const updatedOrders = orders.map((order) => {
+    if (order.id === id) {
+      return updatedOrder;
+    }
+
+    return order;
+  });
+
+  await writeFile(
+    String(process.env.FILE_PATH),
+    JSON.stringify({
+      nextId,
+      pedidos: updatedOrders,
+    }),
+    "utf-8"
+  );
+
+  return updatedOrder;
+};
+
 export default {
   create,
+  updateOne,
+  updateStatus,
 };
