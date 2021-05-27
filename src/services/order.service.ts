@@ -111,8 +111,32 @@ const updateStatus = async (id: number, isDelivered: boolean) => {
   return updatedOrder;
 };
 
+const deleteOne = async (id: number) => {
+  const { nextId, orders } = await readOrdersFile();
+
+  const orderExists = orders.find((order) => order.id === id);
+
+  if (!orderExists) {
+    return null;
+  }
+
+  const updatedOrders = orders.filter((order) => order.id !== id);
+
+  await writeFile(
+    String(process.env.FILE_PATH),
+    JSON.stringify({
+      nextId,
+      pedidos: updatedOrders,
+    }),
+    "utf-8"
+  );
+
+  return true;
+};
+
 export default {
   create,
   updateOne,
   updateStatus,
+  deleteOne,
 };
