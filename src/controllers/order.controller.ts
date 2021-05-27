@@ -27,7 +27,7 @@ const create = async (req: Request, res: Response, next: NextFunction) => {
 
     const order = await Services.create(req.body);
 
-    res.status(200).json({
+    res.status(201).json({
       sucess: true,
       order,
     });
